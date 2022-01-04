@@ -10,6 +10,9 @@ const mongoose = require("mongoose");
 const config = require("./utils/config");
 const logger = require("./utils/logger");
 
+const userRouter = require("./routes/userRouter");
+const loginRouter = require("./routes/loginRouter");
+
 mongoose
   .connect(config.MONGODB_URI, {
     useNewUrlParser: true,
@@ -26,22 +29,25 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use("/users", userRouter);
+app.use("/api/login", loginRouter);
+
+// app.post("/login", (req, res) => {
+//   console.log("a person logged in");
+//   res.send({
+//     token: "test123",
+//   });
+// });
+
+app.get("/", (req, res) => {
+  res.send("<h1>Welcome To Chatty!!!</h1>");
+});
+
 const io = socketio(server, {
   cors: {
     origin: "http://localhost:3000",
     methods: ["GET", "POST"],
   },
-});
-
-app.post("/login", (req, res) => {
-  console.log("a person logged in");
-  res.send({
-    token: "test123",
-  });
-});
-
-app.get("/", (req, res) => {
-  res.send("<h1>Hello</h1>");
 });
 
 // ! Socket IO;
